@@ -1,0 +1,12 @@
+{
+  "name": "Random Activities API",
+  "version": "1.0.0",
+  "description": "Backend server for the Random Activities Web React App that keeps tracks of users and thier saved activities.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Carlos \"Mannie\" Alvarez-Berrios",
+  "license": "ISC"
+}

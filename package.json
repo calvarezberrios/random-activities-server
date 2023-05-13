@@ -4,9 +4,15 @@
   "description": "Backend server for the Random Activities Web React App that keeps tracks of users and thier saved activities.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "server": "nodemon index.js"
   },
   "keywords": [],
   "author": "Carlos \"Mannie\" Alvarez-Berrios",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
 }

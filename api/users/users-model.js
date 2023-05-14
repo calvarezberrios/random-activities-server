@@ -1,10 +1,10 @@
 const { readFileSync, writeFile } = require("fs");
-const dataPath = "../data/data.json";
+const dataPath = "../../data/data.json";
 
 const data = JSON.parse(readFileSync(require.resolve(dataPath)));
 let users = data.users;
 
-let id = users[users.length - 1].id;
+let id = users[users.length - 1].user_id;
 
 function getId() {
   return ++id;
@@ -32,7 +32,7 @@ module.exports = {
 
   async findById(id) {
     // SELECT * FROM users WHERE id = 1001;
-    return users.find((user) => user.id === id);
+    return users.find((user) => user.user_id === id);
   },
 
   async create(newData) {
@@ -46,7 +46,7 @@ module.exports = {
       return null;
     }
 
-    const newUser = { id: getId(), ...newData, bookmarks: [] };
+    const newUser = { user_id: getId(), ...newData, bookmarks: [] };
     users.push(newUser);
 
     writeToFile(users);
@@ -56,11 +56,11 @@ module.exports = {
 
   async update(id, changes) {
     // UPDATE users SET firstName = "John", username = "jsmith" WHERE id = 1004
-    const user = users.find((user) => user.id === id);
+    const user = users.find((user) => user.user_id === id);
     if (!user) return null;
 
-    const updatedUser = { id, ...changes };
-    users = users.map((user) => (user.id === id ? updatedUser : user));
+    const updatedUser = { user_id: id, ...changes };
+    users = users.map((user) => (user.user_id === id ? updatedUser : user));
 
     writeToFile(users);
 
@@ -69,10 +69,10 @@ module.exports = {
 
   async delete(id) {
     // DELETE FROM users WHERE id = 1001
-    const user = users.find((user) => user.id === id);
+    const user = users.find((user) => user.user_id === id);
     if (!user) return null;
 
-    users = users.filter((u) => u.id !== id);
+    users = users.filter((u) => u.user_id !== id);
 
     writeToFile(users);
 

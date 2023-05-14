@@ -1,7 +1,7 @@
 {
   "users": [
     {
-      "id": 1001,
+      "user_id": 1001,
       "firstName": "Mannie",
       "lastName": "Alvarez",
       "email": "carlos.alvarezberrio@gmail.com",
@@ -65,7 +65,7 @@
       ]
     },
     {
-      "id": 1002,
+      "user_id": 1002,
       "firstName": "Test",
       "lastName": "Tester",
       "email": "tester@testmail.com",
@@ -102,7 +102,7 @@
       ]
     },
     {
-      "id": 1003,
+      "user_id": 1003,
       "firstName": "Sara",
       "lastName": "Johnson",
       "email": "sara_alvarez321@yahoo.com",
@@ -121,7 +121,7 @@
       ]
     },
     {
-      "id": 1004,
+      "user_id": 1004,
       "firstName": "John",
       "lastName": "Smith",
       "email": "jsmith@testmail.com",
@@ -129,5 +129,6 @@
       "password": "password",
       "bookmarks": []
     }
-  ]
+  ],
+  "bookmarks": []
 }

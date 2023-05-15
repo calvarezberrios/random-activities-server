@@ -1,6 +1,6 @@
 const express = require("express");
 const Users = require("./users-model");
-const { checkUserId, validateData } = require("./users-middleware");
+const { checkId, validateData } = require("./users-middleware");
 
 const router = express.Router();
 
@@ -14,7 +14,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/:id", checkUserId, async (req, res) => {
+router.get("/:id", checkId, async (req, res) => {
   res.status(200).json(req.user);
 });
 
@@ -44,7 +44,7 @@ router.post("/", validateData, async (req, res) => {
   }
 });
 
-router.put("/:id", [checkUserId, validateData], async (req, res) => {
+router.put("/:id", [checkId, validateData], async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     const { firstName, lastName, email, username, password, bookmarks } =
@@ -68,7 +68,7 @@ router.put("/:id", [checkUserId, validateData], async (req, res) => {
   }
 });
 
-router.delete("/:id", checkUserId, async (req, res) => {
+router.delete("/:id", checkId, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
 

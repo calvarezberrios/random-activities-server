@@ -1,20 +1,11 @@
-const Users = require("./users-model");
+const db = require("../../data/db-config");
 
 module.exports = {
-  checkUserId: async (req, res, next) => {
+  checkId: async (req, res, next) => {
     const id = parseInt(req.params.id);
-    try {
-      const user = await Users.findById(id);
-
-      if (!user) {
-        next({ status: 404, message: `User ${id} not found!` });
-      } else {
-        req.user = user;
-        next();
-      }
-    } catch (err) {
-      next(err);
-    }
+    const user = await db("users").where("user_id", id).first();
+    if (!user) next({ status: 404, message: `User Id: ${id} does not exist.` });
+    else next();
   },
   validateData: (req, res, next) => {
     const { firstName, lastName, email, username, password } = req.body;

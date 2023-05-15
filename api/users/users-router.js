@@ -1,5 +1,6 @@
 const express = require("express");
 const Users = require("./users-model");
+const { checkUserId, validateData } = require("./users-middleware");
 
 const router = express.Router();
 
@@ -9,117 +10,82 @@ router.get("/", async (req, res) => {
 
     res.status(200).json(users);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    next(err);
   }
 });
 
-router.get("/:id", async (req, res) => {
-  try {
-    const id = parseInt(req.params.id);
-
-    const user = await Users.findById(id);
-    if (!user)
-      res.status(404).json({ message: `User with id ${id} does not exist!` });
-    res.status(200).json(user);
-  } catch (err) {
-    res.status(500).json({
-      message: `Error getting user ${req.params.id}: ${err.message}`,
-    });
-  }
+router.get("/:id", checkUserId, async (req, res) => {
+  res.status(200).json(req.user);
 });
 
-router.post("/", async (req, res) => {
+router.post("/", validateData, async (req, res) => {
   try {
     const { firstName, lastName, email, username, password } = req.body;
 
-    if (!firstName || !lastName || !email || !username || !password) {
+    const newUser = await Users.create({
+      firstName,
+      lastName,
+      email,
+      username,
+      password,
+    });
+
+    if (!newUser) {
       res.status(422).json({
-        message:
-          "Missing all required fields: firstName, lastName, email, username, password.",
+        message: `User with username: ${username} or email: ${email} already exists!`,
       });
     } else {
-      const newUser = await Users.create({
-        firstName,
-        lastName,
-        email,
-        username,
-        password,
-      });
-
-      if (!newUser) {
-        res.status(422).json({
-          message: `User with username: ${username} or email: ${email} already exists!`,
-        });
-      } else {
-        res
-          .status(201)
-          .json({ message: "Successfully Created User", data: newUser });
-      }
+      res
+        .status(201)
+        .json({ message: "Successfully Created User", data: newUser });
     }
   } catch (err) {
-    res.status(500).json({
-      message: `Error creating user: ${err.message}`,
-    });
+    next(err);
   }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", [checkUserId, validateData], async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     const { firstName, lastName, email, username, password, bookmarks } =
       req.body;
 
-    if (!firstName || !lastName || !email || !username || !password) {
-      res.status(422).json({
-        message:
-          "Missing all required fields: firstName, lastName, email, username, password.",
-      });
-    } else {
-      const updatedUser = await Users.update(id, {
-        firstName,
-        lastName,
-        email,
-        username,
-        password,
-        bookmarks,
-      });
-
-      if (!updatedUser) {
-        res.status(404).json({
-          message: `No user with id ${id} was found!`,
-        });
-      } else {
-        res.status(200).json({
-          message: "Update Sucessful",
-          data: updatedUser,
-        });
-      }
-    }
-  } catch (err) {
-    res.status(500).json({
-      message: `Error updating user: ${err.message}`,
+    const updatedUser = await Users.update(id, {
+      firstName,
+      lastName,
+      email,
+      username,
+      password,
+      bookmarks,
     });
+
+    res.status(200).json({
+      message: "Update Sucessful",
+      data: updatedUser,
+    });
+  } catch (err) {
+    next(err);
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", checkUserId, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
 
     const deletedUser = await Users.delete(id);
 
-    if (!deletedUser) {
-      res.status(404).json({ message: `User with id ${id} not found!` });
-    } else {
-      res
-        .status(200)
-        .json({ message: "Deleted user successfully.", data: deletedUser });
-    }
+    res
+      .status(200)
+      .json({ message: "Deleted user successfully.", data: deletedUser });
   } catch (err) {
-    res.status(500).json({
-      message: `Error deleting user: ${err.message}`,
-    });
+    next(err);
   }
+});
+
+router.use((error, req, res, next) => {
+  res.status(error.status || 500).json({
+    message: error.message,
+  });
 });
 
 module.exports = router;

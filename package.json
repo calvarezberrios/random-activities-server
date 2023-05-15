@@ -5,7 +5,13 @@
   "main": "index.js",
   "scripts": {
     "server": "nodemon index.js",
-    "start": "node index.js"
+    "start": "node index.js",
+    "up": "knex migrate:up",
+    "latest": "knex migrate:latest",
+    "down": "knex migrate:down",
+    "rollback": "knex migrate:rollback",
+    "seed": "knex seed:run",
+    "resetdb": "npm run rollback && npm run latest && npm run seed"
   },
   "keywords": [],
   "author": "Carlos \"Mannie\" Alvarez-Berrios",
@@ -17,6 +23,7 @@
     "sqlite3": "^5.1.6"
   },
   "devDependencies": {
+    "eslint": "^8.40.0",
     "nodemon": "^2.0.22"
   }
 }

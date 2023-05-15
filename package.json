@@ -4,7 +4,8 @@
   "description": "Backend server for the Random Activities Web React App that keeps tracks of users and thier saved activities.",
   "main": "index.js",
   "scripts": {
-    "server": "nodemon index.js"
+    "server": "nodemon index.js",
+    "start": "node index.js"
   },
   "keywords": [],
   "author": "Carlos \"Mannie\" Alvarez-Berrios",

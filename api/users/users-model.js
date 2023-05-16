@@ -11,6 +11,10 @@ module.exports = {
     );
   },
 
+  async findBy(filter) {
+    return await db("users").where(filter).first();
+  },
+
   async findById(id) {
     return await db("users")
       .select("user_id", "firstName", "lastName", "email", "username")

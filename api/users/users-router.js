@@ -7,6 +7,7 @@ const {
   validateBookmark,
 } = require("./users-middleware");
 const { errorResponse } = require("../global-middleware");
+const { authenticate } = require("../auth/auth-middleware");
 
 const router = express.Router();
 
@@ -18,7 +19,7 @@ router.get("/", (req, res, next) => {
     .catch((err) => next(err));
 });
 
-router.get("/:id", checkId, (req, res, next) => {
+router.get("/:id", [authenticate, checkId], (req, res, next) => {
   const id = parseInt(req.params.id);
   Users.findById(id)
     .then((result) => {
@@ -33,24 +34,6 @@ router.get("/:id/bookmarks", checkId, (req, res, next) => {
   Users.findUserBookmarks(id)
     .then((result) => {
       res.status(200).json(result);
-    })
-    .catch(next);
-});
-
-router.post("/", validateUser, (req, res, next) => {
-  const { firstName, lastName, email, username, password } = req.body;
-
-  Users.create({
-    firstName,
-    lastName,
-    email,
-    username,
-    password,
-  })
-    .then((newUser) => {
-      res
-        .status(201)
-        .json({ message: "Successfully Created User", user: newUser });
     })
     .catch(next);
 });

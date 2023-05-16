@@ -10,7 +10,7 @@ exports.up = async function (knex) {
       table.string("type").notNullable();
       table.integer("participants").notNullable();
       table.double("price").defaultTo(0);
-      table.string("link");
+      table.string("link").defaultTo("");
       table.float("accessibility").defaultTo(0);
     })
     .createTable("user_bookmarks", (table) => {
@@ -21,15 +21,17 @@ exports.up = async function (knex) {
         .notNullable()
         .references("user_id")
         .inTable("users")
-        .onDelete("RESTRICT")
-        .onUpdate("RESTRICT");
+        .onDelete("CASCADE")
+        .onUpdate("CASCADE");
       table
         .string("key")
         .notNullable()
         .references("key")
         .inTable("bookmarks")
-        .onDelete("RESTRICT")
-        .onUpdate("Restrict");
+        .onDelete("CASCADE")
+        .onUpdate("CASCADE");
+
+      table.unique(["user_id", "key"]);
     });
 };
 

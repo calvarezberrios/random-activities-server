@@ -16,5 +16,6 @@ exports.seed = async function (knex) {
     { user_id: 2, key: "4296813" },
     { user_id: 2, key: "1129748" },
     { user_id: 3, key: "1592381" },
+    { user_id: 2, key: "5881647" },
   ]);
 };

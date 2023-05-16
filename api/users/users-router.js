@@ -1,6 +1,12 @@
 const express = require("express");
 const Users = require("./users-model");
-const { checkId, validateData } = require("./users-middleware");
+const Bookmarks = require("../bookmarks/bookmarks-model");
+const {
+  checkId,
+  validateUser,
+  validateBookmark,
+} = require("./users-middleware");
+const { errorResponse } = require("../global-middleware");
 
 const router = express.Router();
 
@@ -12,11 +18,26 @@ router.get("/", (req, res, next) => {
     .catch((err) => next(err));
 });
 
-router.get("/:id", checkId, (req, res) => {
-  res.status(200).json(req.user);
+router.get("/:id", checkId, (req, res, next) => {
+  const id = parseInt(req.params.id);
+  Users.findById(id)
+    .then((result) => {
+      res.status(200).json(result);
+    })
+    .catch(next);
 });
 
-router.post("/", validateData, (req, res, next) => {
+router.get("/:id/bookmarks", checkId, (req, res, next) => {
+  const id = parseInt(req.params.id);
+
+  Users.findUserBookmarks(id)
+    .then((result) => {
+      res.status(200).json(result);
+    })
+    .catch(next);
+});
+
+router.post("/", validateUser, (req, res, next) => {
   const { firstName, lastName, email, username, password } = req.body;
 
   Users.create({
@@ -34,10 +55,32 @@ router.post("/", validateData, (req, res, next) => {
     .catch(next);
 });
 
-router.put("/:id", [checkId, validateData], (req, res, next) => {
+router.post("/:id/bookmark", [checkId, validateBookmark], (req, res, next) => {
   const id = parseInt(req.params.id);
-  const { firstName, lastName, email, username, password, bookmarks } =
+  const { key, activity, type, participants, price, link, accessibility } =
     req.body;
+
+  Bookmarks.saveBookmark(id, {
+    key,
+    activity,
+    type,
+    participants,
+    price,
+    link,
+    accessibility,
+  })
+    .then((result) => {
+      res.status(201).json({
+        message: `Bookmarked activity: ${activity} successfully.`,
+        bookmark: result,
+      });
+    })
+    .catch(next);
+});
+
+router.put("/:id", [checkId, validateUser], (req, res, next) => {
+  const id = parseInt(req.params.id);
+  const { firstName, lastName, email, username, password } = req.body;
 
   Users.update(id, {
     firstName,
@@ -45,7 +88,6 @@ router.put("/:id", [checkId, validateData], (req, res, next) => {
     email,
     username,
     password,
-    bookmarks,
   })
     .then((updatedUser) => {
       res.status(200).json({
@@ -63,16 +105,11 @@ router.delete("/:id", checkId, async (req, res, next) => {
     .then((deletedUser) => {
       res
         .status(200)
-        .json({ message: "Deleted user successfully.", data: deletedUser });
+        .json({ message: "Deleted user successfully.", user: deletedUser });
     })
     .catch(next);
 });
 
-// eslint-disable-next-line no-unused-vars
-router.use((error, req, res, next) => {
-  res.status(error.status || 500).json({
-    message: error.message,
-  });
-});
+router.use(errorResponse);
 
 module.exports = router;

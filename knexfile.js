@@ -3,29 +3,31 @@
 /**
  * @type { Object.<string, import("knex").Knex.Config> }
  */
+
+const common = {
+  client: "sqlite3",
+  useNullAsDefault: true,
+  migrations: { directory: "./data/migrations" },
+  seeds: { directory: "./data/seeds" },
+};
+
 module.exports = {
   development: {
-    client: "sqlite3",
+    ...common,
     connection: {
       filename: "./data/activities.db3",
     },
-    useNullAsDefault: true,
-    migrations: {
-      directory: "./data/migrations",
-    },
-    seeds: {
-      directory: "./data/seeds",
+  },
+  testing: {
+    ...common,
+    connection: {
+      filename: "./data/activities_test.db3",
     },
   },
-
   production: {
-    client: "sqlite3",
+    ...common,
     connection: {
       filename: "./data/activities_prod.db3",
-    },
-    useNullAsDefault: true,
-    migrations: {
-      directory: "./data/migrations",
     },
   },
 };

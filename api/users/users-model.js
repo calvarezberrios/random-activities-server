@@ -82,7 +82,7 @@ module.exports = {
   },
 
   async delete(id) {
-    // DELETE FROM users WHERE id = 1001
+    // DELETE FROM users WHERE id = 1
     const deleted = await this.findById(id);
     await db("users").delete().where("user_id", id);
     await db("user_bookmarks").delete().where("user_id", id);

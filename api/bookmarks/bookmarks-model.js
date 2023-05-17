@@ -49,6 +49,9 @@ module.exports = {
     );
     return users;
   },
+  async removeUserBookmark({ id, key }) {
+    return await db("user_bookmarks").delete().where({ key: key, user_id: id });
+  },
   async deleteBookmark(key) {
     const bookmark = this.findByKey(key);
     await db("bookmarks").delete().where("key", key);

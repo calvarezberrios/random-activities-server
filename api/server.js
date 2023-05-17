@@ -1,20 +1,24 @@
 const express = require("express");
 const morgan = require("morgan");
-const session = require("express-session");
-const Store = require("connect-session-knex")(session);
+//const session = require("express-session"); For the session cookies
+//const Store = require("connect-session-knex")(session); For the session cookies
 const usersRouter = require("./users/users-router");
 const bookmarksRouter = require("./bookmarks/bookmarks-router");
 const authRouter = require("./auth/auth-router");
 const { errorResponse } = require("./global-middleware");
+const { authorize, authenticate } = require("./auth/auth-middleware");
+//const { SECRET } = require("../config"); currently used for the session cookie creation in this file
 
 const server = express();
 
 server.use(express.json());
+/* 
+This is to create session cookies
 server.use(
   session({
     name: "rasid",
     // eslint-disable-next-line no-undef
-    secret: process.env.SECRET || "keep it secret",
+    secret: SECRET,
     cookie: {
       maxAge: 1000 * 60 * 60,
       secure: false,
@@ -30,13 +34,13 @@ server.use(
       clearInterval: 1000 * 60 * 60,
     }),
   })
-);
+); */
 
 server.use(morgan("dev"));
 
 server.use("/api/auth", authRouter);
 server.use("/api/users", usersRouter);
-server.use("/api/bookmarks", bookmarksRouter);
+server.use("/api/bookmarks", authenticate, authorize, bookmarksRouter);
 
 server.get("/", (req, res) => {
   res.status(200).json({ message: "API status is Up!" });

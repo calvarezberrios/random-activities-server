@@ -24,3 +24,10 @@ describe("[GET] /api/users", () => {
     expect(res.status).toBe(200);
   });
 });
+
+describe("[GET] /random-activities", () => {
+  test("resolves an array of 9 random activities", async () => {
+    const res = await request(server).get("/random-activities");
+    expect(res.body).toHaveLength(9);
+  });
+});

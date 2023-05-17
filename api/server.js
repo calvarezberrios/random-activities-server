@@ -7,6 +7,7 @@ const bookmarksRouter = require("./bookmarks/bookmarks-router");
 const authRouter = require("./auth/auth-router");
 const { errorResponse } = require("./global-middleware");
 const { authorize, authenticate } = require("./auth/auth-middleware");
+const axios = require("axios");
 //const { SECRET } = require("../config"); currently used for the session cookie creation in this file
 
 const server = express();
@@ -44,6 +45,37 @@ server.use("/api/bookmarks", authenticate, authorize, bookmarksRouter);
 
 server.get("/", (req, res) => {
   res.status(200).json({ message: "API status is Up!" });
+});
+
+server.get("/random-activities", async (req, res, next) => {
+  const activities = [];
+  for (let i = 0; i < 9; i++) {
+    await axios
+      .get("https://www.boredapi.com/api/activity")
+      .then((res) => {
+        if (!res.data.error) {
+          if (
+            !activities.some(
+              (activity) => activity.activity === res.data.activity
+            )
+          ) {
+            activities.push(res.data);
+          } else {
+            i--;
+          }
+        } else {
+          next({ message: res.data.error });
+        }
+      })
+      .catch((error) =>
+        next({
+          message: "There was an error getting random activities",
+          error: error.message,
+        })
+      );
+  }
+
+  res.status(200).json(activities);
 });
 
 server.use((req, res, next) => {

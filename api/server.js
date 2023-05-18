@@ -1,5 +1,7 @@
 const express = require("express");
 const morgan = require("morgan");
+const helmet = require("helmet");
+const cors = require("cors");
 //const session = require("express-session"); For the session cookies
 //const Store = require("connect-session-knex")(session); For the session cookies
 const usersRouter = require("./users/users-router");
@@ -13,6 +15,8 @@ const axios = require("axios");
 const server = express();
 
 server.use(express.json());
+server.use(helmet());
+server.use(cors());
 /* 
 This is to create session cookies
 server.use(

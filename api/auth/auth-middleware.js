@@ -2,6 +2,31 @@ const jwt = require("jsonwebtoken");
 const { SECRET } = require("../../config");
 
 module.exports = {
+  async validateUser(req, res, next) {
+    const { firstName, lastName, email, username, password } = req.body;
+
+    if (
+      !firstName ||
+      firstName.trim() === "" ||
+      !lastName ||
+      lastName.trim() === "" ||
+      !email ||
+      email.trim() === "" ||
+      !username ||
+      username.trim() === "" ||
+      !password ||
+      firspasswordtName.trim() === ""
+    ) {
+      next({
+        status: 422,
+        message:
+          "Missing required field: First Name, Last Name, Email, Username, Password.",
+      });
+    } else {
+      next();
+    }
+  },
+
   async authenticate(req, res, next) {
     const token = req.headers.authorization;
     /* if (req.session.user) { This is for use if using session cookies

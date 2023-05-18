@@ -28,13 +28,11 @@ router.post("/register", validateUser, async (req, res, next) => {
     Users.create(newUser)
       .then((createdUser) => {
         const token = buildToken(createdUser);
-        res
-          .status(201)
-          .json({
-            message: "Successfully Created User",
-            user: createdUser,
-            token,
-          });
+        res.status(201).json({
+          message: "Successfully Created User",
+          user: createdUser,
+          token,
+        });
       })
       .catch(next);
   }
@@ -42,14 +40,24 @@ router.post("/register", validateUser, async (req, res, next) => {
 
 router.post("/login", async (req, res, next) => {
   const { username, password } = req.body;
-  const user = await Users.findBy({ username });
 
-  if (!user || !bcrypt.compareSync(password, user.password)) {
-    next({ status: 401, message: `Username and/or Password incorrect.` });
+  if (
+    (!username || username.trim() === "") &&
+    (!password || password.trim() === "")
+  ) {
+    next({ status: 422, message: "Missing Username and/or Password." });
   } else {
-    const token = buildToken(user);
-    // req.session.user = user; For using Session Cookies
-    res.status(200).json({ message: `Welcome back, ${user.firstName}`, token });
+    const user = await Users.findBy({ username });
+
+    if (!user || !bcrypt.compareSync(password, user.password)) {
+      next({ status: 401, message: `Username and/or Password incorrect.` });
+    } else {
+      const token = buildToken(user);
+      // req.session.user = user; For using Session Cookies
+      res
+        .status(200)
+        .json({ message: `Welcome back, ${user.firstName}`, token });
+    }
   }
 });
 
